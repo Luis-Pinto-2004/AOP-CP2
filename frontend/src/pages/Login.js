@@ -15,19 +15,22 @@ export default function Login() {
     setError('');
 
     try {
-      const res = await fetch('${API_BASE}/api/auth/login', {
+      const res = await fetch(`${API_BASE}/api/auth/login`, {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify({ username, password })
       });
       const data = await res.json();
 
-      if (res.ok) {
-        localStorage.setItem('token', data.token);
-        navigate('/');
-      } else {
-        setError(data.message || 'Login failed');
+      if (!res.ok) {
+        const text = await res.text();              // evita json() em corpo vazio
+        throw new Error(text || `Login failed (${res.status})`);
       }
+
+      const { token } = await res.json();
+      localStorage.setItem('token', token);
+      navigate('/');
+      
     } catch (err) {
       console.error('Error during login:', err);
       setError('Login failed');
