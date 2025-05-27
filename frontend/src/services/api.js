@@ -1,6 +1,6 @@
 // src/services/api.js
 
-const API_BASE = process.env.REACT_APP_API_BASE || 'http://localhost:5000';
+const API_BASE = process.env.REACT_APP_API_BASE;
 
 // helper para erros HTTP
 async function handleResponse(res) {
@@ -11,7 +11,7 @@ async function handleResponse(res) {
 
 // filmes
 export async function fetchMovies() {
-  const response = await fetch('http://localhost:5000/api/movies'); // Substitua pelo endpoint correto
+  const response = await fetch(`${API_BASE}/api/movies`);
   if (!response.ok) {
     throw new Error('Failed to fetch movies');
   }
