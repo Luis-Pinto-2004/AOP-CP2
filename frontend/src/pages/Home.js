@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/home.css';
 
+const API_BASE = process.env.REACT_APP_API_BASE ;
+
 export default function Home() {
   const [movies, setMovies]         = useState([]);
   const [genres, setGenres]         = useState([]);
@@ -14,7 +16,7 @@ export default function Home() {
 
   // carrega gêneros
   useEffect(() => {
-    fetch('http://localhost:5000/api/movies/genres')
+    fetch(`${API_BASE}/api/movies/genres`)
       .then(r => r.json())
       .then(list => setGenres(['All', ...list]))
       .catch(console.error);
@@ -30,7 +32,7 @@ export default function Home() {
       page,
       limit: 50,
     });
-    fetch(`http://localhost:5000/api/movies?${params}`)
+    fetch(`${API_BASE}/api/movies?${params}`)
       .then(r => {
         if (!r.ok) throw new Error(r.statusText);
         return r.json();

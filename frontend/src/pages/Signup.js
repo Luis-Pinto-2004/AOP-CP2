@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Signup.css';
 
+const API_BASE = process.env.REACT_APP_API_BASE ;
+
 export default function Signup() {
   const [username, setUsername]         = useState('');
   const [email, setEmail]               = useState('');
@@ -20,7 +22,7 @@ export default function Signup() {
     }
 
     try {
-      const res = await fetch('http://localhost:5000/api/auth/signup', {
+      const res = await fetch(`${API_BASE}/api/auth/signup`, {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify({ username, email, password })

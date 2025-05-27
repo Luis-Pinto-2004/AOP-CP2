@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import '../styles/MovieDetails.css';
 
+const API_BASE = process.env.REACT_APP_API_BASE ;
+
 export default function MovieDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -18,7 +20,7 @@ export default function MovieDetails() {
         const headers = {};
         if (token) headers['Authorization'] = `Bearer ${token}`;
 
-        const res = await fetch(`http://localhost:5000/api/movies/${id}`, { headers });
+        const res = await fetch(`${API_BASE}/api/movies/${id}`, { headers });
         if (res.status === 401) {
           // não autorizado → redireciona ao login
           navigate('/login');
