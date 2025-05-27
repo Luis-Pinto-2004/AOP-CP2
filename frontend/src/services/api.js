@@ -1,6 +1,6 @@
 // src/services/api.js
 
-const API_BASE = process.env.REACT_APP_API_BASE;
+const API_BASE = process.env.REACT_APP_API_BASE || 'http://localhost:5000';
 
 // helper para erros HTTP
 async function handleResponse(res) {
