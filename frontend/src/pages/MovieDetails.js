@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import '../styles/MovieDetails.css';
 
-const API_BASE = process.env.REACT_APP_API_BASE ;
+const API_BASE = process.env.REACT_APP_API_BASE;
 
 export default function MovieDetails() {
   const { id } = useParams();
@@ -13,12 +13,22 @@ export default function MovieDetails() {
   const [loading, setLoading] = useState(true);
   const [error, setError]     = useState(null);
 
+  // Pega o token pra saber se está logado
+  const token = localStorage.getItem('token');
+
+  // Logout handler
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/');
+  };
+
   useEffect(() => {
     async function fetchDetails() {
       try {
-        const token = localStorage.getItem('token');
         const headers = {};
-        if (token) headers['Authorization'] = `Bearer ${token}`;
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
+        }
 
         const res = await fetch(`${API_BASE}/api/movies/${id}`, { headers });
         if (res.status === 401) {
@@ -37,7 +47,7 @@ export default function MovieDetails() {
     }
 
     fetchDetails();
-  }, [id, navigate]);
+  }, [id, navigate, token]);
 
   if (loading) return <p className="center-text">Loading...</p>;
   if (error)   return <p className="center-text error-text">Error: {error}</p>;
@@ -61,10 +71,16 @@ export default function MovieDetails() {
 
   return (
     <>
-      {/* cabeçalho compartilhado */}
       <header className="header">
         <Link to="/" className="header__logo">MLFLIX</Link>
-        <Link to="/login" className="header__login-btn">Login</Link>
+        {token
+          ? <button className="header__login-btn" onClick={handleLogout}>
+              Logout
+            </button>
+          : <Link to="/login" className="header__login-btn">
+              Login
+            </Link>
+        }
       </header>
 
       <div className="details-page">
@@ -135,6 +151,7 @@ export default function MovieDetails() {
             </div>
           </div>
         </div>
+
         <footer className="footer">
           © 2025 MLFLIX. Todos os direitos reservados.
         </footer>
