@@ -24,7 +24,7 @@ export default function Home() {
   const handleLogout = () => {
     localStorage.removeItem('token')
     // redireciona pro login
-    navigate('/login')
+    navigate('/')
   }
 
   // carrega gêneros
