@@ -1,8 +1,9 @@
+// src/pages/Login.js
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import '../styles/Login.css';
 
-const API_BASE = process.env.REACT_APP_API_BASE ;
+const API_BASE = process.env.REACT_APP_API_BASE;
 
 export default function Login() {
   const [username, setUsername] = useState('');
@@ -18,22 +19,25 @@ export default function Login() {
       const res = await fetch(`${API_BASE}/api/auth/login`, {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ username, password })
+        body:    JSON.stringify({ username, password }),
       });
+
+      // lê o JSON UMA ÚNICA VEZ
       const data = await res.json();
 
       if (!res.ok) {
-        const text = await res.text();              // evita json() em corpo vazio
-        throw new Error(text || `Login failed (${res.status})`);
+        // usa a mensagem do corpo (data.message) ou fallback para status
+        throw new Error(data.message || `Login failed (${res.status})`);
       }
 
-      const { token } = await res.json();
+      // quando OK, data já tem o token
+      const { token } = data;
       localStorage.setItem('token', token);
       navigate('/');
-      
+
     } catch (err) {
       console.error('Error during login:', err);
-      setError('Login failed');
+      setError(err.message);
     }
   };
 
@@ -41,6 +45,7 @@ export default function Login() {
     <div className="login-container">
       <h2>Login</h2>
       {error && <div className="auth-error">{error}</div>}
+
       <form className="auth-form" onSubmit={handleSubmit}>
         <label>Username</label>
         <input
