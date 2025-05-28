@@ -79,12 +79,14 @@ export default function Home() {
 
       {!loading && !error && (
         <>
-          <div className="movie-grid">
-            {movies.map(m => {
-              // prepara URL real do poster
-              const realUrl = m.poster
-                ? (m.poster.startsWith('http') ? m.poster : `https://${m.poster}`)
-                : null;
+            <div className="movie-grid">
+              {movies
+                .filter(m => m.poster)                // só quem tem poster definido
+                .map(m => {
+                // Converte URL do poster para HTTPS se necessário
+                const realUrl = m.poster
+                  ? (m.poster.startsWith('http') ? m.poster : `https://${m.poster}`)
+                  : null;
 
               return (
                 <Link
