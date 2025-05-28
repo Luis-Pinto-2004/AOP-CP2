@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import '../styles/home.css';
 
-const API_BASE = process.env.REACT_APP_API_BASE ;
+const API_BASE = process.env.REACT_APP_API_BASE;
+const PLACEHOLDER = 'https://placehold.co/300x450?text=No+Image';
 
 export default function Home() {
   const [movies, setMovies]         = useState([]);
@@ -14,7 +15,7 @@ export default function Home() {
   const [loading, setLoading]       = useState(true);
   const [error, setError]           = useState(null);
 
-  // carrega gêneros
+  // Carrega gêneros
   useEffect(() => {
     fetch(`${API_BASE}/api/movies/genres`)
       .then(r => r.json())
@@ -22,7 +23,7 @@ export default function Home() {
       .catch(console.error);
   }, []);
 
-  // carrega filmes sempre que muda filtro ou página
+  // Carrega filmes sempre que mude filtro ou página
   useEffect(() => {
     setLoading(true);
     setError(null);
@@ -80,12 +81,11 @@ export default function Home() {
         <>
           <div className="movie-grid">
             {movies.map(m => {
-              // se não começar por http, prefixa
-              const src = m.poster
-                ? (m.poster.startsWith('http')
-                    ? m.poster
-                    : `https://${m.poster}`)
-                  : 'https://placehold.co/300x450?text=No+Image';
+              // prepara URL real do poster
+              const realUrl = m.poster
+                ? (m.poster.startsWith('http') ? m.poster : `https://${m.poster}`)
+                : null;
+
               return (
                 <Link
                   key={m._id}
@@ -94,11 +94,20 @@ export default function Home() {
                 >
                   <div className="poster-wrapper">
                     <img
-                      src={src}
+                      loading="lazy"
+                      src={PLACEHOLDER}
+                      data-src={realUrl}
                       alt={m.title}
                       className="poster"
-                      loading="lazy"
-                      onError={e => e.target.src = src}
+                      onLoad={e => {
+                        const url = e.target.getAttribute('data-src');
+                        if (url) {
+                          // tenta carregar imagem real em background
+                          const img = new Image();
+                          img.src = url;
+                          img.onload = () => { e.target.src = url; };
+                        }
+                      }}
                     />
                   </div>
                   <div className="info">
