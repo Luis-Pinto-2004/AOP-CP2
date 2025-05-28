@@ -1,4 +1,3 @@
-// src/pages/Login.js
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import '../styles/Login.css';
@@ -22,19 +21,19 @@ export default function Login() {
         body:    JSON.stringify({ username, password }),
       });
 
-      // lê o JSON UMA ÚNICA VEZ
+      // Lê o corpo UMA ÚNICA VEZ
       const data = await res.json();
 
       if (!res.ok) {
-        // usa a mensagem do corpo (data.message) ou fallback para status
+        // Se a API retornar { message: "..." }, usamos ela; senão, fallback pro status
         throw new Error(data.message || `Login failed (${res.status})`);
       }
 
-      // quando OK, data já tem o token
+      // Se chegou aqui, login foi OK e data.token existe
       const { token } = data;
       localStorage.setItem('token', token);
       navigate('/');
-
+      
     } catch (err) {
       console.error('Error during login:', err);
       setError(err.message);
